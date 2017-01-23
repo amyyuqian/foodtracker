@@ -26,8 +26,13 @@ class Meal {
         self.photo = photo
         self.rating = rating
         
-        // initialization should fail if there is no name or if the rating is negative
-        if name.isEmpty || rating < 0 {
+        // name must not be empty
+        guard !name.isEmpty else {
+            return nil
+        }
+        
+        // rating must be between 0 and 5 inclusive
+        guard (rating >= 0) && (rating <= 5) else {
             return nil
         }
     }
