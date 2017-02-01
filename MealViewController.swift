@@ -18,9 +18,9 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
     /*
-     this value is either passed by 'MealTableViewController' in 'prepare(for:sender:) or 
+     this value is either passed by 'MealTableViewController' in 'prepare(for:sender:) or
      constructed as part of adding a new meal
-    */
+     */
     var meal: Meal?
     
     override func viewDidLoad() {
@@ -42,7 +42,18 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     
     // MARK: navigation
     @IBAction func cancel(_ sender: UIBarButtonItem) {
-        dismiss(animated: true, completion: nil)
+        
+        // depending on style of presentation (modal or push presentation), this view controller
+        // needs to be dismissed in two different ways
+        let isPresentingInAddMealMode = presentingViewController is UINavigationController
+        
+        if isPresentingInAddMealMode {
+            dismiss(animated: true, completion: nil)
+        } else if let owningNavigationController = navigationController {
+            owningNavigationController.popViewController(animated: true)
+        } else {
+            fatalError("The MealViewController is not inside a navigation controller")
+        }
     }
     
     // this method configures a view controller before it's presented
@@ -62,7 +73,7 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         // set the meal to be passed to MealTableViewController after the unwind segue
         meal = Meal(name: name, photo: photo!, rating: rating)
     }
-
+    
     // MARK: actions
     
     @IBAction func selectImageFromPhotoLibrary(_ sender: UITapGestureRecognizer) {
